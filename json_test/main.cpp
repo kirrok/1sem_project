@@ -1,12 +1,13 @@
-#include <stdio.h>
 #include <iostream>
-#include <cstring>
 #include "json/json.h"
+#include "jconverter.h"
+#include "jconverter_one.h"
+#include "jconverter_two.h"
 
 using namespace std;
 
 int main(int argc, char **argv) {
-
+//1st request
     json_object *jquery = json_object_new_object();
     json_object *jtype = json_object_new_int(1);
     json_object *jlt = json_object_new_int(-19);
@@ -29,28 +30,32 @@ int main(int argc, char **argv) {
     json_object_object_add(jquery, "ut", jut);
     json_object_object_add(jquery, "act", jarray);
 
-
     cout << json_object_to_json_string(jquery) << endl << endl;
+//second request
+    json_object *jquery1 = json_object_new_object();
 
-    //==============
-    //RECEIVED JSON STRING , LET'S PARSE IT!:
+    json_object *jtype1 = json_object_new_int(2);
+    json_object_object_add(jquery1, "type", jtype1);
 
-    json_object *jtype_serv_side = json_object_object_get(jquery, "type");
-    json_object *jlt_serv_side = json_object_object_get(jquery, "lt");
-    json_object *jut_serv_side = json_object_object_get(jquery, "ut");
+    json_object *jname = json_object_new_string("MOSCOW");
+    json_object_object_add(jquery1,"name", jname);
 
-    printf("%s %s %s    ", json_object_to_json_string(jtype_serv_side), json_object_to_json_string(jlt_serv_side),
-           json_object_to_json_string(jut_serv_side));
+    json_object *jquery3 = jquery1;
 
-    json_object *jarray_serv_side = json_object_object_get(jquery, "act");
-             //ssss
-    int act_number = json_object_array_length(jarray_serv_side);
+    cout <<"QUERY TYPE: "<< jconverter::type(jquery3) << endl;
 
-    for (int i = 0; i < act_number; i++) {
-        json_object *jact = json_object_array_get_idx(jarray_serv_side, i);
-        cout << json_object_to_json_string(jact) << " " ;
+    if (jconverter::type(jquery3) == 1) {
+        jconverter_one converter(jquery3);
+        data data_ = converter.convert();
+        cout << data_.lt << " " << data_.ut << " ";
+        for (int i = 0; i < data_.act_number; i++) {
+            cout << data_.act[i] << " ";
+        }
     }
-
+    else {
+        jconverter_two converter(jquery3);
+        cout << converter.convert();
+    }
 
     return 0;
 }
@@ -120,5 +125,56 @@ Process finished with exit code 0
         jt = json_object_object_get(j_by_index, "weather");
 
         printf("%s   %s \n", json_object_to_json_string(jcity), json_object_to_json_string(jt));
+    }
+*/
+
+
+
+//=================
+
+
+
+/*  json_object *jquery = json_object_new_object();
+    json_object *jtype = json_object_new_int(1);
+    json_object *jlt = json_object_new_int(-19);
+    json_object *jut = json_object_new_int(31);
+    json_object *jarray = json_object_new_array();
+
+    json_object *jactivities[3];
+    jactivities[0] = json_object_new_int(1);
+    jactivities[1] = json_object_new_int(3);
+    jactivities[2] = json_object_new_int(7);
+
+
+    json_object_array_put_idx(jarray, 0, jactivities[0]);
+    json_object_array_put_idx(jarray, 1, jactivities[1]);
+    json_object_array_put_idx(jarray, 2, jactivities[2]);
+
+
+    json_object_object_add(jquery, "type", jtype);
+    json_object_object_add(jquery, "lt", jlt);
+    json_object_object_add(jquery, "ut", jut);
+    json_object_object_add(jquery, "act", jarray);
+
+
+    cout << json_object_to_json_string(jquery) << endl << endl;
+
+    //==============
+    //RECEIVED JSON STRING , LET'S PARSE IT!:
+
+    json_object *jtype_serv_side = json_object_object_get(jquery, "type");
+    json_object *jlt_serv_side = json_object_object_get(jquery, "lt");
+    json_object *jut_serv_side = json_object_object_get(jquery, "ut");
+
+    printf("%s %s %s    ", json_object_to_json_string(jtype_serv_side), json_object_to_json_string(jlt_serv_side),
+           json_object_to_json_string(jut_serv_side));
+
+    json_object *jarray_serv_side = json_object_object_get(jquery, "act");
+
+    int act_number = json_object_array_length(jarray_serv_side);
+
+    for (int i = 0; i < act_number; i++) {
+        json_object *jact = json_object_array_get_idx(jarray_serv_side, i);
+        cout << json_object_to_json_string(jact) << " " ;
     }
 */
