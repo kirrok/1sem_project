@@ -113,7 +113,7 @@ int main() {
     listen(sockfd, 5);
     cout << "LISTENING!" << endl;
 
-    while (1) {
+//    while (1) {
 
         clilent_addr_size = sizeof(cli_addr);
 
@@ -137,7 +137,7 @@ int main() {
 
         close(newsockfd);
 
-    }
+//}
     close(sockfd);
     return 0;
 }
