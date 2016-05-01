@@ -125,7 +125,7 @@ int main() {
         bzero(buffer, 256);
 
 //      n = read(newsockfd, header, sizeof(size_t));
-        n = read(newsockfd, header, sizeof(size_t));
+        n = read(newsockfd, buffer, sizeof(size_t));
 
 	
 	//cout << (size_t)(*header) <<endl;
