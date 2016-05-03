@@ -90,7 +90,7 @@ int main() {
     socklen_t clilent_addr_size;
 
     size_t *header = new size_t;
-    char *buffer;
+    char *buffer = new char[256];
 
     sockaddr_in serv_addr, cli_addr;
 
@@ -113,7 +113,7 @@ int main() {
     listen(sockfd, 5);
     cout << "LISTENING!" << endl;
 
-    while (1) {
+//    while (1) {
 
         clilent_addr_size = sizeof(cli_addr);
 
@@ -122,11 +122,14 @@ int main() {
         if (newsockfd < 0)
             error("ERROR on accept");
 
-//        bzero(buffer, 256);
+        bzero(buffer, 256);
 
-        n = read(newsockfd, header, sizeof(size_t));
-	cout << (size_t)(*header) <<endl;
-// надо парсить размер и тип запроса
+//      n = read(newsockfd, header, sizeof(size_t));
+        n = read(newsockfd, buffer, sizeof(size_t));
+
+	
+	//cout << (size_t)(*header) <<endl;
+	cout << buffer << endl;
         // n = write(newsockfd,json_object_to_json_string(jobj1),256);
 
 
@@ -134,7 +137,7 @@ int main() {
 
         close(newsockfd);
 
-    }
+//}
     close(sockfd);
     return 0;
 }
