@@ -47,28 +47,27 @@ int main() {
 
     cout << "СЛУШАЮ!" << endl;
 
-
+    cout << sockfd << endl;
     while (1) {
 
         clilent_addr_size = sizeof(cli_addr);
         newsockfd = accept(sockfd, (sockaddr *) &cli_addr, &clilent_addr_size);
+        cout << newsockfd << endl;
 
         if (newsockfd < 0)
             error("ERROR on accept");
 
+        bzero(header, sizeof(int));
         n = read(newsockfd, header, sizeof(int));
         if (n < 0) error("ERROR reading to socket");
 
-        char *buffer = new char[*header];
+        char *buffer = new char[*header+1];
         bzero(buffer, *header);
-        cout <<"11111111:" << buffer << endl;
         cout << "Получили от клиента длину: " << *header << endl;
 
         n = read(newsockfd, buffer, *header);
-        cout << buffer << endl;
         if (n < 0) error("ERROR reading to socket");
         cout << "\nПолучили от клиента строку:" << buffer <<endl;
-
         json_object *jquery = json_tokener_parse(buffer);
 
         cout << " \nКонвертируем в json: " << json_object_to_json_string(jquery) << endl;
@@ -89,7 +88,7 @@ int main() {
             MYSQL_RES *res = db.get_res();
 
             response = converter.convert_db_response_to_json_one(res, rows_number);
-            cout << "\n Json - ответ:  "<< json_object_to_json_string(response) << endl;
+            cout << "\n Json - ответ:  "<< json_object_to_json_string(response) << endl<<endl;
 
         } else if (converter.type() == 2) {
             int id = converter.convert_json_to_data_two();
@@ -109,12 +108,15 @@ int main() {
             continue;
         }
 
-        *header = strlen(json_object_to_json_string(response));
+        string response_s = json_object_to_json_string(response);
+        response_s += "\0";
+
+        *header = response_s.length();
 
         n = write(newsockfd, header, sizeof(int));
         if (n < 0) error("ERROR reading to socket");
 
-        n = write(newsockfd, json_object_to_json_string(response), *header);
+        n = write(newsockfd,response_s.c_str(), *header);
         if (n < 0) error("ERROR reading to socket");
 
         delete[] buffer;
