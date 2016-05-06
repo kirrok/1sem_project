@@ -61,16 +61,17 @@ int main() {
 
         char *buffer = new char[*header];
         bzero(buffer, *header);
-
-        cout << "Получили от клиента длину: " << *header << flush;
+        cout <<"11111111:" << buffer << endl;
+        cout << "Получили от клиента длину: " << *header << endl;
 
         n = read(newsockfd, buffer, *header);
+        cout << buffer << endl;
         if (n < 0) error("ERROR reading to socket");
-        cout << "\nПолучили от клиента строку:" << buffer << flush;
+        cout << "\nПолучили от клиента строку:" << buffer <<endl;
 
         json_object *jquery = json_tokener_parse(buffer);
 
-        cout << " \nКонвертируем в json: " << json_object_to_json_string(jquery) << flush;
+        cout << " \nКонвертируем в json: " << json_object_to_json_string(jquery) << endl;
 
         jconverter converter(jquery);
 
@@ -82,18 +83,18 @@ int main() {
             data data_ = converter.convert_json_to_data_one();
 
             string query = ar.build_query_one(data_.lt, data_.ut, data_.act_number, data_.act);
-            cout << "\nЗапрос который пойдет в базу:" << query << flush;
+            cout << "\nЗапрос который пойдет в базу:" << query << endl;
 
             unsigned long rows_number = db.query_(query);
             MYSQL_RES *res = db.get_res();
 
             response = converter.convert_db_response_to_json_one(res, rows_number);
-            cout << "\n Json - ответ: " << flush << json_object_to_json_string(response) << endl;
+            cout << "\n Json - ответ:  "<< json_object_to_json_string(response) << endl;
 
         } else if (converter.type() == 2) {
             int id = converter.convert_json_to_data_two();
             string query = ar.build_query_two(id);
-            cout << "\nЗапрос который пойдет в базу:" << query << flush;
+            cout << "\nЗапрос который пойдет в базу:" << query << endl;
 
             unsigned long rows_number = db.query_(query);
 
@@ -103,7 +104,10 @@ int main() {
 
             cout << "\n Json - ответ: " << flush << json_object_to_json_string(response) << endl;
 
-        } else { cout << "Incorrect request type!" << endl; }
+        } else {
+            cout << "Incorrect request type!" << endl;
+            continue;
+        }
 
         *header = strlen(json_object_to_json_string(response));
 
